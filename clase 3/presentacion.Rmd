@@ -1,0 +1,379 @@
+---
+title: "Clase 3 MAESTRÍA GENERACIÓN Y ANÁLISIS DE INFORMACIÓN ESTADÍSTICA"
+author: "Luis Nahuel Fernández"
+date: "2024-08-05"
+output: 
+  rmdformats::material:
+    code_folding: hide
+---
+
+# El problema de la no respuesta en las encuestas
+
+"La falta de repuesta —total o parcial— es una situación recurrente en las encuestas de hogares, y no tenerlo en cuenta puede generar situaciones no deseadas en la fase de inferencia estadística." (Medina y Galván, 2007)
+
+# A qué nos referimos cuando hablamos de no respuesta
+
+Puede haber casos en los que la no respuesta sea una opción válida en una encuesta de opinión, por ejemplo cuando se mide el conocimiento de un candidato. Pero hay casos donde se transforma en un problema grave, cuando se habla de no respuesta en esta presentación se hace referencia a estos casos.
+
+# No respuesta total o parcial
+
+La no respuesta puede ser total o parcial. 
+
+**Total** es cuando es cuando el respondente no puede o no quiere responder ninguna de las preguntas. 
+
+**Parcial** es cuando el cuestionario es respondido, con excepción de una o varias de las preguntas que lo componen. 
+
+
+
+# Consecuencias de la no respuesta
+
+La no respuesta afecta la completitud de la muestra, por lo que implica un aumento del coeficiente de variación de las estimaciones a la vez que puede introducir sesgos en las mismas si no se da de manera completamente aleatoria.
+
+Esto afecta gravemente la calidad de los relevamientos y obtura su capacidad para realizar inferencias confiables. Por lo que es necesario realizar tratamientos para mitigar los efectos de la no respuesta.
+
+# Temáticas sensibles
+
+Existen temáticas sensibles en las cuales la no respuesta se transforma en el principal defecto de las encuestas:
+
+- Trabajo infantil
+- Consumos problemáticos
+- Encuestas de ingresos
+- Personas sin techo
+
+
+# Data frame de ejemplo
+
+Para observar un primer ejemplo, trabajaremos con un data frame generado de manera artificial de 1000 registros y que tiene 3 variables. El ejemplo me permite tener conocimiento de los valores poblacionales, así como simular la tasa de no respuesta a nivel muestral.
+
+
+```{r data frame}
+minimo=1000
+maximo=3000
+mediaDef=(minimo+maximo)/2
+
+data <- data.frame(
+  Y = runif(1000,minimo,maximo), 
+  X1 = rnorm(1000,400, 100)
+  
+)
+
+data$X2 = data$Y*3+rnorm(1000, 2500,sd = 2000)
+```
+
+Siempre se debe hacer un análisis preliminar de las variables con las cuales se va a trabajar.
+
+## Y
+
+Es una variable con distribución uniforme cuyo valor mínimo es `r minimo` y máximo `r maximo` Por lo que por definición posee una media de `r mediaDef`. Se utiliza una variable de tipo uniforme para que sea más intuitiva al ojo humano la influencia de la no respuesta, pero la no respuesta se puede dar en variables con cualquier distribución.
+
+### Gráfico de densidad:
+
+```{r Y}
+mean(data$Y)->mediaOriginal
+plot(density(data$Y, na.rm = T), "Variable Y sin no respuesta", sub = paste0("media ",mediaOriginal))
+```
+
+### Estadísticos:
+
+```{r Y2}
+summary(data$Y)
+```
+
+## X1
+
+Es una variable de distribución normal de media 400 y desvío estandar de 100, independiente de Y.
+
+### Gráfico de densidad de X1:
+
+```{r X1}
+plot(density(data$X1, na.rm = T), "Variable X1")
+```
+
+### Estadísticos de X1:
+
+```{r X1b}
+summary(data$X1)
+```
+
+
+### Correlación entre X1 e Y:
+
+```{r X1c}
+cor(data$Y, data$X1)
+```
+
+
+## X2 
+
+Es una variable fuertemente correlacionada (para el campo de las ciencias sociales) con Y. La fórmula con la que se la construyó es Y*3, más un error con distribución normal para simular una correlación no tan alta.
+
+### Gráfico de densidad de X2:
+
+```{r X2a}
+plot(density(data$X2, na.rm = T), "X2")
+```
+
+
+### Estadísticos de X2
+
+```{r X2}
+
+summary(data$X2)
+
+```
+### Correlación entre X2 e Y:
+
+```{r X2b}
+cor(data$Y, data$X2)
+pairs(data$Y ~ data$X2)
+```
+
+# Patrones de no respuesta
+
+La no respuesta puede seguir distintos patrones:
+
+- **MCAR**: Missing completely at random
+- **MAR**: Missing at random
+- **MNAR**: Missing not at random
+
+Es una responsabilidad del analista detectar cuál es el patrón que sigue en cada caso y actuar en consecuencia.
+
+## Tasa de no respuesta
+
+La tasa de no respuesta es una de las cuestiones a tener en cuenta ya que ante determinados patrones, el aumento o la disminución de la misma puede hacer que el grado de las consecuencias sea muy distinto. En este ejemplo vamos a introducir distintas tasas de no respuesta para observar qué sucede con cada patrón.
+
+# MCAR
+
+Missing completely at ramdom o datos perdidos completamente aleatorios es un patrón de no respuesta que supone que la misma no está influenciada por ninguna de las variables del dataset. Por lo que para simularla solo es necesario obtener una muestra aleatoria simple y asignarle una no respuesta.
+
+## NR=10%
+
+Frente a una tasa de no respuesta del 10% se observa que tanto la media como la distribución son bastante aproximadas a las de la variable sin no respuesta. 
+
+```{r MCAR10}
+data$YMCAR<-data$Y
+data$YMCAR[sample(1:1000, 100)] <- NA
+mean(data$YMCAR, na.rm = T)->media
+mean(data$Y)->mediaOrig
+par(mfrow = c(1, 2))
+plot(density(data$Y, na.rm = T), paste0("Y"), sub = paste0("media ",mediaOrig))
+plot(density(data$YMCAR, na.rm = T), paste0("Y MCAR 10% NR"), sub = paste0("media ",media))
+```
+
+## NR=25%
+
+Frente a una tasa de no respuesta del 25% se observa que tanto la media como la distribución son bastante aproximadas a las de la variable sin no respuesta. 
+
+```{r MCAR25}
+data$YMCAR<-data$Y
+data$YMCAR[sample(1:1000, 250)] <- NA
+mean(data$YMCAR, na.rm = T)->media
+mean(data$Y)->mediaOrig
+par(mfrow = c(1, 2))
+plot(density(data$Y, na.rm = T), paste0("Y"), sub = paste0("media ",mediaOrig))
+plot(density(data$YMCAR, na.rm = T), paste0("Y MCAR 25% NR"), sub = paste0("media ",media))
+```
+
+## NR=40%
+
+Frente a una tasa de no respuesta del 40% se observa que tanto la media como la distribución son bastante aproximadas a las de la variable sin no respuesta. Sin embargo también se observa que a medida que crece la no respuesta, la diferencia puede aumentar.
+
+```{r MCAR40}
+data$YMCAR<-data$Y
+data$YMCAR[sample(1:1000, 400)] <- NA
+mean(data$YMCAR, na.rm = T)->media
+mean(data$Y)->mediaOrig
+par(mfrow = c(1, 2))
+plot(density(data$Y, na.rm = T), paste0("Y"), sub = paste0("media ",mediaOrig))
+plot(density(data$YMCAR, na.rm = T), paste0("Y MCAR 40% NR"), sub = paste0("media ",media))
+```
+
+## Características generales
+
+- Todas las unidades seleccionadas tienen la misma probabilidad de respuesta a la variable objetivo
+- La media muestral sigue siendo un estimador (casi) insesgado de la media poblacional
+
+Puede suceder cuando se cometen errores en el proceso de relevamiento o carga de los cuestionarios. 
+
+No requiere tratamientos especiales para la corrección de los efectos de la no respuesta.
+
+# MAR
+
+Missing at random o datos perdidos al azar es un patrón de no respuesta que supone una vinculación con otras variables de la encuesta. Por lo que para modelarla se va a calcular la probabilidad de no respuesta teniendo en cuenta X1 y X2.
+
+## La no respuesta está relacionada a una variable con baja correlación
+
+Supongamos que la no respuesta se encuentra correlacionada fuertemente con X1 y debilmente con X2, le vamos a sumar un error aleatorio uniforme ya que también puede explicarse en parte por variables que no se encuentran en nuestro dataset. En este modelo la probabilidad de no respuesta se explica, en promedio, en un 57\% por X1, en un 7\% por X2 y en un 36\% por otras variables. La probabilidad de respuesta es en promedio de 1,4. De esta manera mediante otra variable normal puedo generar distintas tasas de respuesta y en base a ellas simular la no respuesta.
+
+El gráfico de densidad de la probabilidad de no respuesta es el siguiente:
+
+```{r MAR1}
+data$prob<-data$X1/500+data$X2/40000+runif(1000,0,1)
+plot(density(data$prob, na.rm = T), "prob NR")
+
+```
+
+Por lo que para poder calcular el % de no respuesta utilizaremos una variable con distribución semejante, o sea en este caso normal.
+
+### NR cercana al 10%
+
+Se observa una diferencia en la media de Y superior a MCAR, aunque en terminos relativos sigue siendo pequeña.  
+
+```{r MAR2}
+data$YMAR<-ifelse(data$prob>rnorm(1000,2.28,0.51),NA, data$Y)
+mean(data$YMAR, na.rm = T)->media
+(sum(is.na(data$YMAR))/1000)*100->tasa
+par(mfrow = c(1, 2))
+plot(density(data$Y, na.rm = T), paste0("Y"), sub = paste0("media ",mediaOrig))
+plot(density(data$YMAR, na.rm = T), paste0("MAR ind ",tasa,"% NR"), sub = paste0("media ",media))
+```
+
+### NR cercana al 25%
+
+La diferencia en la media en terminos relativos aumenta.
+
+```{r MAR3}
+data$YMAR<-ifelse(data$prob>rnorm(1000,1.9,0.51),NA, data$Y)
+mean(data$YMAR, na.rm = T)->media
+(sum(is.na(data$YMAR))/1000)*100->tasa
+par(mfrow = c(1, 2))
+plot(density(data$Y, na.rm = T), paste0("Y"), sub = paste0("media ",mediaOrig))
+plot(density(data$YMAR, na.rm = T), paste0("MAR ind ",tasa,"% NR"), sub = paste0("media ",media))
+```
+
+### NR cercana al 40%
+
+La diferencia en la media en terminos relativos tiende a aumentar a medida que crece la tasa de no respuesta. La diferencia en el gráfico de densidad tiende a aumentar en el mismo sentido.
+
+```{r MAR4}
+data$YMAR<-ifelse(data$prob>rnorm(1000,1.6,0.4),NA, data$Y)
+mean(data$YMAR, na.rm = T)->media
+(sum(is.na(data$YMAR))/1000)*100->tasa
+par(mfrow = c(1, 2))
+plot(density(data$Y, na.rm = T), paste0("Y"), sub = paste0("media ",mediaOrig))
+plot(density(data$YMAR, na.rm = T), paste0("MAR ind ",tasa,"% NR"), sub = paste0("media ",media))
+```
+
+## La no respuesta está relacionada a una variable con alta correlación
+
+Ahora supongamos el ejemplo opuesto, que la no respuesta se encuentra correlacionada fuertemente con X2 y debilmente con X1, le vamos a sumar un error aleatorio uniforme ya que también puede explicarse en parte por variables que no se encuentran en nuestro dataset. En este modelo la probabilidad de no respuesta se explica, en promedio, en un 2\% por X1, en un 83\% por X2 y en un 15\% por otras variables. La probabilidad de no respuesta es en promedio de 3,4. De esta manera mediante otra variable normal puedo generar distintas tasas de respuesta y en base a ellas simularuna no respuesta.
+
+El gráfico de densidad de la probabilidad de no respuesta para este caso es el siguiente:
+
+```{r MARb}
+data$prob<-data$X1/5000+data$X2/3000+runif(1000,0,1)
+plot(density(data$prob, na.rm = T), "prob NR")
+
+```
+
+Por lo que para poder calcular el % de no respuesta utilizaremos una variable con distribución semejante, o sea en este caso normal.
+
+### NR cercana al 10%
+
+Se observa una diferencia mayor que en el caso de MCAR y MAR con alta influencia de variables independientes. 
+
+```{r MARb2}
+data$YMAR<-ifelse(data$prob>rnorm(1000,5.14,1),NA, data$Y)
+mean(data$YMAR, na.rm = T)->media
+(sum(is.na(data$YMAR))/1000)*100->tasa
+par(mfrow = c(1, 2))
+plot(density(data$Y, na.rm = T), paste0("Y"), sub = paste0("media ",mediaOrig))
+plot(density(data$YMAR, na.rm = T), paste0("MAR cor ",tasa,"% NR"), sub = paste0("media ",media))
+```
+
+### NR cercana al 25%
+
+A medida que aumenta la tasa de no respuesta se encuentra un mayor sesgo en la media y más diferencias en la distribución de la respuesta. La no respuesta crece entre aquellos casos con valores de Y más altos.
+
+```{r MARb3}
+data$YMAR<-ifelse(data$prob>rnorm(1000,4.34,1),NA, data$Y)
+mean(data$YMAR, na.rm = T)->media
+(sum(is.na(data$YMAR))/1000)*100->tasa
+par(mfrow = c(1, 2))
+plot(density(data$Y, na.rm = T), paste0("Y"), sub = paste0("media ",mediaOrig))
+plot(density(data$YMAR, na.rm = T), paste0("MAR cor ",tasa,"% NR"), sub = paste0("media ",media))
+```
+
+### NR cercana al 40%
+
+La diferencia se vuelve importante.
+
+```{r MARb4}
+data$YMAR<-ifelse(data$prob>rnorm(1000,3.8,1),NA, data$Y)
+mean(data$YMAR, na.rm = T)->media
+(sum(is.na(data$YMAR))/1000)*100->tasa
+par(mfrow = c(1, 2))
+plot(density(data$Y, na.rm = T), paste0("Y"), sub = paste0("media ",mediaOrig))
+plot(density(data$YMAR, na.rm = T), paste0("MAR cor ",tasa,"% NR"), sub = paste0("media ",media))
+```
+
+## Características generales
+
+- La probabilidad de respuesta de la variable objetivo depende de variables auxiliares
+- La media muestral ya no es un estimador (casi) insesgado de la media poblacional
+
+Puede suceder por ejemplo cuando no hay un correcto diseño conceptual de una pregunta y genera malestar en el respondente generando que no responda preguntas subsiguientes. Otro ejemplo es que le pregunte sobre su edad y sus ingresos a distintas personas. Las mayores pueden ser más reticentes que las menores a contestar sobre el ingreso ya que tienden a ser más cautelosas. 
+
+Se puede corregir la no respuesta para eliminar el sesgo.
+
+# MNAR
+
+Missing not at random o datos perdidos no al azar es un patrón de no respuesta que supone que la no respuesta de una variable se explica por sí misma. Por lo que para modelarla la probabilidad de no respuesta va a aumentar en el caso de que la variable Y sea mayor (también podría suceder lo inverso). Y se utilizará una variable con distribución uniforme para simular la probabilidad de respuesta.
+
+### NR cercana al 10%
+
+Se observa una diferencia mayor que en el caso de MCAR y MAR con alta influencia de variables independientes.
+
+```{r MNAR1}
+data$YMNAR<-ifelse(data$Y>runif(1000,0,20000), NA, data$Y)
+mean(data$YMNAR, na.rm = T)->media
+(sum(is.na(data$YMNAR))/1000)*100->tasa
+par(mfrow = c(1, 2))
+plot(density(data$Y, na.rm = T), paste0("Y"), sub = paste0("media ",mediaOrig))
+plot(density(data$YMNAR, na.rm = T), paste0("MNAR ",tasa,"% NR"), sub = paste0("media ",media))
+```
+
+### NR cercana al 25%
+
+A medida que aumenta la tasa de no respuesta se encuentra un mayor sesgo en la media y más diferencias en la distribución de la respuesta. La no respuesta crece entre aquellos casos con valores de Y más altos.
+
+```{r MNAR2}
+data$YMNAR<-ifelse(data$Y>runif(1000,0,8000), NA, data$Y)
+mean(data$YMNAR, na.rm = T)->media
+(sum(is.na(data$YMNAR))/1000)*100->tasa
+par(mfrow = c(1, 2))
+plot(density(data$Y, na.rm = T), paste0("Y"), sub = paste0("media ",mediaOrig))
+plot(density(data$YMNAR, na.rm = T), paste0("MNAR ",tasa,"% NR"), sub = paste0("media ",media))
+```
+
+### NR cercana al 40%
+
+La diferencia se vuelve importante.
+
+```{r MNAR3}
+data$YMNAR<-ifelse(data$Y>runif(1000,0,5000), NA, data$Y)
+mean(data$YMNAR, na.rm = T)->media
+(sum(is.na(data$YMNAR))/1000)*100->tasa
+par(mfrow = c(1, 2))
+plot(density(data$Y, na.rm = T), paste0("Y"), sub = paste0("media ",mediaOrig))
+plot(density(data$YMNAR, na.rm = T), paste0("MNAR ",tasa,"% NR"), sub = paste0("media ",media))
+```
+
+## Características generales
+
+- La probabilidad de respuesta a la variable objetivo no depende de variables auxiliares
+- La media muestral ya no es un estimador (casi) insesgado de la media poblacional
+- En general no podremos eliminar el sesgo  
+
+Ejemplo: Una encuesta de boca de urna en la que la no respuesta depende de a qué candidato vota.
+
+# Próxima clase
+
+Propuestas para el tratamiento de la no respuesta:
+
+- Reponderación
+- Imputación
+
+Y por otro lado:
+
+- Calibración
