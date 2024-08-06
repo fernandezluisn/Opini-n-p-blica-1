@@ -1,5 +1,5 @@
 ---
-title: "Clase 3 MAESTRÍA GENERACIÓN Y ANÁLISIS DE INFORMACIÓN ESTADÍSTICA"
+title: "Clase 3 Investigación electoral y de Opinión Pública Aplicada I"
 author: "Luis Nahuel Fernández"
 date: "2024-08-05"
 output: 
@@ -43,7 +43,7 @@ Existen temáticas sensibles en las cuales la no respuesta se transforma en el p
 
 # Data frame de ejemplo
 
-Para observar un primer ejemplo, trabajaremos con un data frame generado de manera artificial de 1000 registros y que tiene 3 variables. El ejemplo me permite tener conocimiento de los valores poblacionales, así como simular la tasa de no respuesta a nivel muestral.
+Para observar un primer ejemplo, trabajaremos con un data frame generado de manera artificial de 1000 registros y que tiene 3 variables. El ejemplo permite tener conocimiento de los valores poblacionales, así como simular la tasa de no respuesta a nivel muestral.
 
 
 ```{r data frame}
