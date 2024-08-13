@@ -9,19 +9,45 @@ output:
 
 # El problema de la no respuesta en las encuestas
 
+<div align="center">
+
+![](../logo.png)
+
+<h2>Maestría en generación y análisis de datos estadísticos</h2>
+<h3>Investigación electoral y de Opinión Pública Aplicada I: clase 3</h3>
+<h3>Lic. Luis Nahuel Fernández</h3>
+<h4>2024</h4>
+
+<br>
+
+
+
+</div>
+
 "La falta de repuesta —total o parcial— es una situación recurrente en las encuestas de hogares, y no tenerlo en cuenta puede generar situaciones no deseadas en la fase de inferencia estadística." (Medina y Galván, 2007)
 
 # A qué nos referimos cuando hablamos de no respuesta
 
 Puede haber casos en los que la no respuesta sea una opción válida en una encuesta de opinión, por ejemplo cuando se mide el conocimiento de un candidato. Pero hay casos donde se transforma en un problema grave, cuando se habla de no respuesta en esta presentación se hace referencia a estos casos.
 
+La no respuesta en el dataset puede ser:
+
+- NA
+- NULL
+- 0
+- -9
+- .
+
+O incluso puede haber casos donde debamos corregir respuestas inválidas o mal cargadas.
+
+
 # No respuesta total o parcial
 
-La no respuesta puede ser total o parcial. 
+## La no respuesta puede ser total o parcial. 
 
-**Total** es cuando es cuando el respondente no puede o no quiere responder ninguna de las preguntas. 
+## **Total** es cuando es cuando el respondente no puede o no quiere responder ninguna de las preguntas. 
 
-**Parcial** es cuando el cuestionario es respondido, con excepción de una o varias de las preguntas que lo componen. 
+## **Parcial** es cuando el cuestionario es respondido, con excepción de una o varias de las preguntas que lo componen. 
 
 
 
@@ -30,6 +56,13 @@ La no respuesta puede ser total o parcial.
 La no respuesta afecta la completitud de la muestra, por lo que implica un aumento del coeficiente de variación de las estimaciones a la vez que puede introducir sesgos en las mismas si no se da de manera completamente aleatoria.
 
 Esto afecta gravemente la calidad de los relevamientos y obtura su capacidad para realizar inferencias confiables. Por lo que es necesario realizar tratamientos para mitigar los efectos de la no respuesta.
+
+Una tercera cuestión a tener en cuenta cuando se trabaja con estimaciones de distribución, como por ejemplo el coeficiente de Gini es cómo la no respuesta afecta la distribución.
+
+<div align="center">
+!["Ejemplos de distintos tipos de distribuciones aleatorias."](../distribuciones.jpeg)
+</div>
+
 
 # Temáticas sensibles
 
@@ -367,13 +400,11 @@ plot(density(data$YMNAR, na.rm = T), paste0("MNAR ",tasa,"% NR"), sub = paste0("
 
 Ejemplo: Una encuesta de boca de urna en la que la no respuesta depende de a qué candidato vota.
 
-# Próxima clase
+# Próximas 2 clases
 
 Propuestas para el tratamiento de la no respuesta:
 
 - Reponderación
 - Imputación
-
-Y por otro lado:
-
 - Calibración
+- Propensity score

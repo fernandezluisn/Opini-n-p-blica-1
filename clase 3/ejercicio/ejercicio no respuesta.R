@@ -22,9 +22,11 @@ gc()
 
 # Consigna 1: 
 # Observe el diccionario de variables y luego la base de estudiantes.
-# Luego analice la no respuesta a la variable de materias previas (ap17) y a la de las faltas (ap19).
+# Luego analice la no respuesta a la variable de asistencia a nivel inicial (ap24) y a la de las faltas (ap26).
+# ¿Qué valores pueden tomarse como no respuesta según su criterio?
 # ¿Cuál es la tasa de no respuesta?
 # ¿Observa algún patrón en la no respuesta? ¿Cuál?
+# Analice los NA por separado del resto
 
 #### parte 2 del ejercicio: descargo bases usuarias EPH 1T24 ####
 
@@ -46,5 +48,5 @@ gc()
 # Luego analice la no respuesta a la variable de ingreso de la ocupación principal (P21).
 # ¿Qué sucede con los -9? 
 # ¿Cuál es la tasa de no respuesta?
-# ¿Analice su relación con otras variables como nivel educativo, sexo, cat_ocup, PP07H, etc.?
+# ¿Analice la relación de la tasa de respuesta con otras variables como nivel educativo, sexo, cat_ocup, PP07H, etc.?
 # ¿Observa algún patrón en la no respuesta? ¿Cuál?
