@@ -1,5 +1,5 @@
 ---
-title: "clases 4 y 5 Investigación electoral y de Opinión Pública Aplicada I"
+title: "Clases 4 y 5 Investigación electoral y de Opinión Pública Aplicada I"
 subtitle: "Tratamientos para la corrección de la no respuesta"
 author: "Luis Nahuel Fernández"
 date: "2024-08-06"
@@ -61,7 +61,7 @@ Se excluyen solo los casos que no tienen respuesta a un par de variables determi
 ## Imputación por medias
 
 Consiste en imputar la media de determinada variable, condicionada o no. Es la forma más arcaica de impitación.
-Tampoco es recomendable su utilización ya que altera significativamente la distribución de la variable en la que se utiiza disminuyendo su varianza. 
+Tampoco es recomendable su utilización ya que altera significativamente la distribución de la variable en la que se utiliza disminuyendo su varianza. 
 Puede ser un recurso útil solo en casos de una tasa de no respuesta muy baja o cuando el único parámetro de interes es la media de la variable a imputar.
 
 ## Estimación por máxima verosimilitud
@@ -188,7 +188,7 @@ Del universo U, tengo una muestra s con las siguientes caracteríctiscas:
 
 De esta manera estimamos el total de ${Y_{i}}$ mediante
 
-${\hat t_{yPS}} = \displaystyle \sum_{h} N_{h} . ({\hat t_{yh}/ \hat N_h)$
+${\hat t_{yPS}} = \displaystyle \sum_{h} N_{h} . ({\hat t_{yh}/ \hat N_h)}$
 
 ### Características que deben cumplirse
 
@@ -255,9 +255,9 @@ Donde
 
 ## Control de los factores de ajuste
 
-Luego de la calibración es conveniente graficar la distribución de los factores de ajuste y ponderaciones finales por estrato. Se pueden utiizar tanto boxplot como histograma. El objetivo es evaluar por un lado que se haya calibrado correctamente y por el otro la existencia o no de valores extremos en los ponderadores posteriores a la calibración.
+Luego de la calibración es conveniente graficar la distribución de los factores de ajuste y ponderaciones finales por estrato. Se pueden utilizar tanto boxplot como histograma. El objetivo es evaluar por un lado que se haya calibrado correctamente y por el otro la existencia o no de valores extremos en los ponderadores posteriores a la calibración.
 
-## Ejemplo
+# Ejemplo
 
 Supongamos que realizamos una encuesta a personas de ambos sexos mayores de 64 años en la provincia de Córdoba. Y tenemos una muestra probabílistica compuesta por 200 respondentes en la ciudad de Río Cuarto, 1000 en el Grán Córdoba y 800 en el resto de la provincia. Sabemos que la cantidad de personas en esta franja etaria en toda la provincia es cercana a las 450.000 personas. Para identificar a los aglomerados se utilizaron las definiciones de los aglomerados de la EPH, pero para el interior de la provincia se utilizó el código 45. Sin embargo observamos que los ponderadores de diseño no representan correctamente los totales poblacionales que obtuvimos mediante la EPH.
 
@@ -425,6 +425,14 @@ boxplot(data[, c("ponderador", "calibracionPE", "calibracionLogit", "calibracion
 En esta carpeta se encuentra "baseBalotaje". Dicha base simula ser un relevamiento de opinión pública previo a un balotaje en la provincia de Santa Fé realizado en Rosario y la ciudad de Santa Fé de la Vera Crúz.
 El objetivo de esta tarea es responder quién de los dos candidatos tiene más chances de ganar la elección en la provincia. Para poder responder a esta pregunta se debe en primer lugar analizar cuál es el patrón de la no respuesta. En segundo lugar, se deberá comparar tratamientos para la resolución de la misma. En el caso de calibrar se recomienda ajustar por sexo y grupo etario por separado para cada aglomerado. Una vez realizada la calibración es importante analizar qué sucede con los ponderadores, ¿Hay valores extremos? 
 
+Variables:
+
+- Sexo: misma categorización que ch04 en EPH
+- Ciudad: misma categorización que aglomerado en EPH
+- Estado: **0** Sin ocupación, **1** ocupado
+- GEtario: **1** 16 a 30 años, **2** 30 a 64 años, **3** 65 años o más.
+- Estrato: se construyó en base a estado y x1
+
 # Propensión de respuesta
 
 - Es un derivado del propensity score matching
@@ -493,7 +501,7 @@ data %>% group_by(AGLOMERADO, CH04) %>% summarise(pondRaking=sum(calibracionRaki
   kbl(caption = "Varones y mujeres por aglomerado con no respuesta ajustada por PS") %>%
   kable_classic(full_width = F, html_font = "Cambria")
 ```
-Comparamos los ponderadores ajustados mediante propensity score con otros reponderados mediante pos estratiicación.
+Comparamos los ponderadores ajustados mediante propensity score con otros reponderados mediante pos estratificación.
 
 ```{r}
 data$pondiVarNR<-ifelse(is.na(data$varNR),0,data$calibracionRaking)
