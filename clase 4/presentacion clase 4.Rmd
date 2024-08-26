@@ -247,11 +247,13 @@ Nota: G es positiva, derivable en a y estrictamente convexa y G(a,a)=0 factor de
 
 - $G(a,b)=(a-b)^2/2b$ => GREG
 - $G(a,b)=a . log(a/b)+b-a$ => Raking
-- $G(a,b)=a . log(a/b)+(1-a) . log(\frac{1-a}{1-b})$ => Raking
+- $G(a,b)=a . log(a/b)+(1-a) . log(\frac{1-a}{1-b})$ => Logit
 
-Donde 
-- a es la población estimada en la muestra
-- b es la población objetivo esperada según los datos exógenos
+Donde: 
+
+- $a$ es la población estimada en la muestra
+
+- $b$ es la población objetivo esperada según los datos exógenos
 
 ## Control de los factores de ajuste
 
@@ -400,7 +402,7 @@ summary(data$calibracionLogit)
 ```
 
 
-Ponderador Logit:
+Ponderador Raking:
 
 ```{r}
 summary(data$calibracionRaking)
